@@ -14,6 +14,20 @@ app.use('/public', express.static(process.cwd() + '/public'));
 
 app.use(cors({origin: '*'})); //USED FOR FCC TESTING PURPOSES ONLY!
 
+// Add Mongoose.
+// Set up database connection.
+var mongoose = require('mongoose');
+mongoose.connect(process.env.DB,
+		 { useNewUrlParser: true,
+		   useUnifiedTopology: true});
+mongoose.Promise = global.Promise;
+
+
+
+
+
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
