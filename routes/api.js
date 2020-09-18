@@ -19,9 +19,33 @@ module.exports = function (app) {
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
     })
     
-    .post(function (req, res){
-      var title = req.body.title;
-      //response will contain new book object including atleast _id and title
+    /* POST a book title to /api/books  */
+    .post(function (req, res, next){
+      
+      // Create a book object with the new title.
+      var book = new Book(
+          { title: req.body.title}
+      );
+
+      // Search to see if book already exists...
+      Book.findOne({'title': req.body.title})
+          .exec(function (err, foundBook){ 
+              if (err) {return next(err); }
+
+              // If the book exists, let the user know.
+              if (foundBook){
+                  res.send('title already exists');
+              } else {
+                  // The book doesn't exist, so save it.
+                  book.save(function(err) {
+                      if (err) {return next(err);}
+                      
+                      // Give the json response.
+                      res.json({'title': book.title, 'comments': book.comments, '_id': book._id});
+                  });              
+
+              }
+          }); 
     })
     
     .delete(function(req, res){
