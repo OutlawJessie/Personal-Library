@@ -61,8 +61,12 @@ module.exports = function (app) {
           }); 
     })
     
-    .delete(function(req, res){
-      //if successful response will be 'complete delete successful'
+    /* DELETE all books at /api/books/ */
+    .delete(function(req, res, next){
+      Book.remove({}, function(err, removeStatus){
+           if (err) { return next(err); }
+           res.send('complete delete successful');
+      });
     });
 
 
@@ -86,7 +90,6 @@ module.exports = function (app) {
       // Find the book by id, and initiate callback function.
       Book.findById({_id: req.params.id}, function(err, book){
           if (err) {return next(err);}
-          console.log(book);
           // Check if a book was found.
           if (!book){
               res.send('no book exists'); // FCC repl example shows 'null' in their example.
