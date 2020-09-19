@@ -66,11 +66,9 @@ module.exports = function (app) {
     });
 
 
-
+  /* GET a book by its id at /api/books/ */
   app.route('/api/books/:id')
     .get(function (req, res){
-      var bookid = req.params.id;
-      //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
       Book.findById({_id: req.params.id}, function(err, book){
           if (err){ return next(err); }
           if (book) {
@@ -84,26 +82,39 @@ module.exports = function (app) {
     /* POST a comment for a book id at /api/books */
     .post(function(req, res, next){
 
-     
+
       // Find the book by id, and initiate callback function.
       Book.findById({_id: req.params.id}, function(err, book){
           if (err) {return next(err);}
+          console.log(book);
+          // Check if a book was found.
+          if (!book){
+              res.send('no book exists'); // FCC repl example shows 'null' in their example.
+          } else {
+              // Push the comment to the book that was found.
+              book.comments.push(req.body.comment);
 
-          // Push the comment to the book that was found.
-          book.comments.push(req.body.comment);
-
-          // Save the book, and deliver the json response.
-          book.save(function(err, savedBook){
-              if (err) {return next(err);}
-              res.json({'_id': savedBook._id, 'title': savedBook.title, 'comments': savedBook.comments});
-          });
+              // Save the book, and deliver the json response.
+              book.save(function(err, savedBook){
+                  if (err) {return next(err);}
+                  res.json({'_id': savedBook._id, 'title': savedBook.title, 'comments': savedBook.comments});
+              });
+          }
       });
-      //json res format same as .get
     })
     
-    .delete(function(req, res){
-      var bookid = req.params.id;
-      //if successful response will be 'delete successful'
+    /* DELETE a book by its id at /api/books */
+    .delete(function(req, res, next){
+
+      // Check if book id exists...
+      if (!req.params.id){
+          res.json('no book exists');
+      } else { // Book does exist, so find and delete.
+          Book.findOneAndRemove({_id:req.params.id}, function(err, removedBook) {
+              if (err) { return next(err); }
+              res.send('delete successful');
+          });
+      }
     });
   
 };
