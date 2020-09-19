@@ -78,13 +78,15 @@ module.exports = function (app) {
   /* GET a book by its id at /api/books/ */
   app.route('/api/books/:id')
     .get(function (req, res){
-      Book.findById({_id: req.params.id}, function(err, book){
-          if (err){ return next(err); }
-          if (book) {
-              res.json({'_id': book._id, 'title': book.title, 'comments': book.comments});
-          } else {
-              res.send('no book exists');
-          }          
+      Book.findOne({_id: req.params.id}, function(err, book){
+              if (err){ return next(err); }
+              
+              // Check if book exists or not...
+              if (book) {
+                  res.json({'_id': book._id, 'title': book.title, 'comments': book.comments});
+              } else {
+                  res.send('no book exists');
+              }          
       });
     })
     
