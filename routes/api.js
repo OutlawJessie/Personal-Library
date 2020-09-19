@@ -71,12 +71,19 @@ module.exports = function (app) {
     .get(function (req, res){
       var bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
+      Book.findById({_id: req.params.id}, function(err, book){
+          if (err){ return next(err); }
+          if (book) {
+              res.json({'_id': book._id, 'title': book.title, 'comments': book.comments});
+          } else {
+              res.send('no book exists');
+          }          
+      });
     })
     
     /* POST a comment for a book id at /api/books */
     .post(function(req, res, next){
-      var bookid = req.params.id;
-      var comment = req.body.comment;
+
      
       // Find the book by id, and initiate callback function.
       Book.findById({_id: req.params.id}, function(err, book){
