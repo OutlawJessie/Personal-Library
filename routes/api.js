@@ -14,6 +14,8 @@ var Book = require('../models/book');
 module.exports = function (app) {
 
   app.route('/api/books')
+
+    /* GET an array of books from /api/books */
     .get(function (req, res){
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
@@ -71,9 +73,24 @@ module.exports = function (app) {
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
     
-    .post(function(req, res){
+    /* POST a comment for a book id at /api/books */
+    .post(function(req, res, next){
       var bookid = req.params.id;
       var comment = req.body.comment;
+     
+      // Find the book by id, and initiate callback function.
+      Book.findById({_id: req.params.id}, function(err, book){
+          if (err) {return next(err);}
+
+          // Push the comment to the book that was found.
+          book.comments.push(req.body.comment);
+
+          // Save the book, and deliver the json response.
+          book.save(function(err, savedBook){
+              if (err) {return next(err);}
+              res.json({'_id': savedBook._id, 'title': savedBook.title, 'comments': savedBook.comments});
+          });
+      });
       //json res format same as .get
     })
     
