@@ -17,6 +17,17 @@ module.exports = function (app) {
     .get(function (req, res){
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+      Book.find({})
+           .select({'_id':1, 'title':1, 'comments':1, 'commentcount':1}) // seem to need 'comments' for virtual 'commentcount'
+           .exec(function(err, allBooks){
+               if (err) {return next(err); }
+              
+               // Delete the comments.
+               let bookDisplay = allBooks.map( (bookObj) => {
+                   return {'_id': bookObj._id, 'title': bookObj.title, 'commentcount': bookObj.commentcount}; 
+               });
+	       res.send(bookDisplay);
+           });
     })
     
     /* POST a book title to /api/books  */
