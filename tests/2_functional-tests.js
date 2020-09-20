@@ -38,23 +38,40 @@ suite('Functional Tests', function() {
   suite('Routing tests', function() {
 
 
-    suite('POST /api/books with title => create book object/expect book object', function() {
+    /*suite('POST /api/books with title => create book object/expect book object', function() {
       
       test('Test POST /api/books with title', function(done) {
-        //done();
+        chai.request(server)
+            .post('/api/books')
+            .end(function(err, res){
+                done();
+            });
       });
       
       test('Test POST /api/books with no title given', function(done) {
-        //done();
+        done();
       });
       
-    });
+    });*/
 
 
     suite('GET /api/books => array of books', function(){
       
       test('Test GET /api/books',  function(done){
-        //done();
+          chai.request(server)
+              .get('/api/books')
+              .end(function(err, res){
+                  assert.equal(res.status, 200);
+                  assert.isArray(res.body, 'needs to be an array');
+                  assert.isObject(res.body[0], 'needs to be an object');
+                  assert.property(res.body[0], '_id', 'object needs an _id');
+                  assert.property(res.body[0], 'title', 'object needs a title');
+                  assert.property(res.body[0], 'commentcount', 'object needs a commentcount');
+                  assert.isString(res.body[0]._id, '_id value must be string');
+                  assert.isString(res.body[0].title, 'title value must be string');
+                  assert.isNumber(res.body[0].commentcount, 'commentcount value must be number');
+                  done();
+              });
       });      
       
     });
@@ -63,11 +80,23 @@ suite('Functional Tests', function() {
     suite('GET /api/books/[id] => book object with [id]', function(){
       
       test('Test GET /api/books/[id] with id not in db',  function(done){
-        //done();
+          chai.request(server)
+              .get('/api/books/7f666897a3a0719ad5da38ff')
+              .end(function(err, res){
+                  assert.equal(res.status, 200);
+                  assert.strictEqual(res.text, 'no book exists');
+                  done();
+              });
       });
       
       test('Test GET /api/books/[id] with valid id in db',  function(done){
-        //done();
+          chai.request(server)
+              .get('/api/books/5f666897a3a0714ad5da38ff')
+              .end(function(err, res){
+                  assert.equal(res.status, 200);
+                  assert.isObject(res.body);
+                  done();
+              });
       });
       
     });
