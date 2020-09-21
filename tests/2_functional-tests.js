@@ -13,8 +13,14 @@ var server = require('../server');
 
 chai.use(chaiHttp);
 
+
+
 suite('Functional Tests', function() {
 
+
+   // Declare variable for tests.
+    var testDummy;
+    
   /*
   * ----[EXAMPLE TEST]----
   * Each test should completely test the response of the API end-point including response status code!
@@ -38,21 +44,32 @@ suite('Functional Tests', function() {
   suite('Routing tests', function() {
 
 
-    /*suite('POST /api/books with title => create book object/expect book object', function() {
+    suite('POST /api/books with title => create book object/expect book object', function() {
       
       test('Test POST /api/books with title', function(done) {
         chai.request(server)
             .post('/api/books')
+            .send({title: 'No One Will Read This Book'})
             .end(function(err, res){
+                testDummy = res.body._id;       // Needs to be deleted in final test.
+                assert.equal(res.status, 200);
+                assert.equal(res.body.title, 'No One Will Read This Book');
                 done();
             });
       });
       
       test('Test POST /api/books with no title given', function(done) {
-        done();
+          chai.request(server)
+              .post('/api/books')
+              .send({title: ''})
+              .end(function(err,res){
+                  assert.equal(res.status, 200);
+                  assert.equal(res.text, 'missing title');
+                  done();
+              });
       });
       
-    });*/
+    });
 
 
     suite('GET /api/books => array of books', function(){
@@ -102,13 +119,33 @@ suite('Functional Tests', function() {
     });
 
 
-    suite('POST /api/books/[id] => add comment/expect book object with id', function(){
+    /*suite('POST /api/books/[id] => add comment/expect book object with id', function(){
       
       test('Test POST /api/books/[id] with comment', function(done){
-        //done();
+          chai.request(server)
+	      .post('api/books/5f666897a3a0714ad5da38ff')
+	      .
       });
       
-    });
+    }); */
+
+
+      /* This tests deleting a book by its id. */
+      suite('DELETE /api/books/[id] => delete a book by id', function(){
+      
+            test('Test DELETE /api/books/[id]', function(done){
+                chai.request(server)
+	            .delete('/api/books/' + testDummy)
+	            .end(function(err, res){
+                        assert.equal(res.status, 200)
+                        assert.strictEqual(res.text, 'delete successful');
+                        done();
+                    });
+      });
+      
+    }); 
+
+
 
   });
 
