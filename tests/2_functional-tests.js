@@ -217,19 +217,32 @@ suite('Functional Tests', function() {
 	
         suite('GET headers', function() {
       
-          /* This tests populating the library with a book. The book id here is used in other tests. */
-          test('GET X-Powered-By header key/ expect PHP 4.2.0', function(done) {
+          /* This tests that the x-powered-by header does not reveal we are using Express. */
+          test('GET x-powered-by header key/ expect PHP 4.2.0', function(done) {
             chai.request(server)
                 .get('/')
                 .end(function(err, res){
                     assert.equal(res.status, 200);
-		    console.log(res.headers);
 		    assert.strictEqual(res.headers['x-powered-by'], 'PHP 4.2.0');
                     done();
                 });
           });
 
-
+        
+          /* This tests that the website is not caching information from the client. 
+              For the 4 assertions used here, see https://www.npmjs.com/package/nocache. */
+          test('GET caching header keys/ expect no caching', function(done) {
+            chai.request(server)
+                .get('/')
+                .end(function(err, res){
+                    assert.equal(res.status, 200);
+		    assert.equal(res.headers['cache-control'], 'no-store, no-cache, must-revalidate, proxy-revalidate');
+		    assert.equal(res.headers.pragma, 'no-cache');
+		    assert.equal(res.headers.expires, '0');
+		    assert.equal(res.headers['surrogate-control'], 'no-store');
+                    done();
+                });
+          });
 
 
 	    
