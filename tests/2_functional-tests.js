@@ -119,17 +119,46 @@ suite('Functional Tests', function() {
     });
 
 
-    /*suite('POST /api/books/[id] => add comment/expect book object with id', function(){
+    suite('POST /api/books/[id] => add comment/expect book object with id', function(){
       
       test('Test POST /api/books/[id] with comment', function(done){
           chai.request(server)
-	      .post('api/books/5f666897a3a0714ad5da38ff')
-	      .
+	      .post('/api/books/' + testDummy)
+              .send({comment: 'what an amazing book'})	  
+	      .end(function(err, res){
+		  assert.equal(res.status, 200);
+		  assert.isObject(res.body);
+		  assert.strictEqual(res.body._id, testDummy);
+		  assert.strictEqual(res.body.title, 'No One Will Read This Book');
+		  assert.isArray(res.body.comments);
+		  assert.strictEqual(res.body.comments[0], 'what an amazing book');
+		  done();
+	      });
       });
       
-    }); */
+    }); 
 
 
+
+    suite('POST /api/books/ => add blank comment for book id/expect missing comment', function(){
+      
+      test('Test POST /api/books/[id] without comment', function(done){
+          chai.request(server)
+	      .post('/api/books/' + testDummy)
+              .send({comment: ''})	  
+	      .end(function(err, res){
+		  assert.equal(res.status, 200);
+                  assert.strictEqual(res.text, 'missing comment');
+		  done();
+	      });
+      });
+      
+    });
+
+
+
+
+      
       /* This tests deleting a book by its id. */
       suite('DELETE /api/books/[id] => delete a book by id', function(){
       
