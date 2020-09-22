@@ -14,32 +14,12 @@ var server = require('../server');
 chai.use(chaiHttp);
 
 
-
 suite('Functional Tests', function() {
 
 
    // Declare variable for tests.
     var testDummy;
     
-  /*
-  * ----[EXAMPLE TEST]----
-  * Each test should completely test the response of the API end-point including response status code!
-  */
-  /*test('#example Test GET /api/books', function(done){
-     chai.request(server)
-      .get('/api/books')
-      .end(function(err, res){
-        assert.equal(res.status, 200);
-        assert.isArray(res.body, 'response should be an array');
-        assert.property(res.body[0], 'commentcount', 'Books in array should contain commentcount');
-        assert.property(res.body[0], 'title', 'Books in array should contain title');
-        assert.property(res.body[0], '_id', 'Books in array should contain _id');
-        done();
-      });
-  });*/
-  /*
-  * ----[END of EXAMPLE TEST]----
-  */
 
   suite('Routing tests', function() {
 
@@ -226,4 +206,35 @@ suite('Functional Tests', function() {
 
   });
 
+
+
+
+
+
+
+    
+    suite('Security tests', function() {
+	
+        suite('GET headers', function() {
+      
+          /* This tests populating the library with a book. The book id here is used in other tests. */
+          test('GET X-Powered-By header key/ expect PHP 4.2.0', function(done) {
+            chai.request(server)
+                .get('/')
+                .end(function(err, res){
+                    assert.equal(res.status, 200);
+		    console.log(res.headers);
+		    assert.strictEqual(res.headers['x-powered-by'], 'PHP 4.2.0');
+                    done();
+                });
+          });
+
+
+
+
+	    
+	});
+
+    });
+    
 });
